@@ -3,7 +3,7 @@
 
 ## a simple tiny wrapper of argument parser
 - There are already pairs of optional keywords and default values and types in function signature, and
-docstring as a description.
+docstring as a description. just use it!
 - no more verbose code for command line options :)
 
 ## write sample.py
