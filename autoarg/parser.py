@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import argparse
 import sys
+import inspect
 
 
 def _str2bool(v):
@@ -88,31 +89,18 @@ class Parser(object):
 
     @classmethod
     def from_entry_point(cls, entry=None, **defaults):
-        import inspect
-
-        def get_doc(entry_):
-            if inspect.isclass(entry_):
-                docstring = entry_.__init__.__doc__
-            else:
-                docstring = entry_.__doc__
-            return docstring
-
-        def get_options_from_entry(entry_):
-            a = inspect.getargspec(entry_)  # namedtuple(args, varargs, keywords, defaults)
-            if a.defaults is None:
-                options = dict()
-                nargs = len(a.args)
-            else:
-                options = dict(zip(reversed(a.args), reversed(a.defaults)))
-                nargs = len(a.args) - len(a.defaults)
-            args = a.args[:nargs]  # type: list(str)
-
-            return args, options
+        """
+        make a parser instance from the callable entry point
+        :param callable | type  entry: callable or name of class
+        :param defaults:
+        :return: parser object
+        :rtype: Parser
+        """
 
         # def main() is default entry point
         main = entry or _get_entry_point(main=entry)
 
-        docstring = get_doc(main)
+        docstring = get_docstring(main)
         args, options = get_options_from_entry(main)
         options.update(defaults)
 
@@ -124,6 +112,21 @@ class Parser(object):
 
         return parser
 
+    @classmethod
+    def from_args_kwargs(cls, args, kwargs, docstring=''):
+        """
+        :param list[str] args: positional arguments
+        :param dict[str, Any] kwargs: optional arguments with default values
+        :param str docstring: docstring will be used as a command help description
+        :return:
+        :rtype Parser:
+        """
+        parser = cls(**kwargs)  # type Parser
+        parser.add_positional_args(args)
+        parser.description = docstring
+
+        return parser
+
 
 def _get_entry_point(main=None):
     import sys as _sys
@@ -131,9 +134,36 @@ def _get_entry_point(main=None):
     return main
 
 
-def run(main=None, argv=None, **options):
+def get_docstring(entry):
+    if inspect.isclass(entry):
+        docstring = entry.__init__.__doc__
+    else:
+        docstring = entry.__doc__
+    return docstring
 
-    main = _get_entry_point(main)
+
+def get_options_from_entry(entry):
+    a = inspect.getargspec(entry)  # namedtuple(args, varargs, keywords, defaults)
+    if a.defaults is None:
+        options = dict()
+        nargs = len(a.args)
+    else:
+        options = dict(zip(reversed(a.args), reversed(a.defaults)))
+        nargs = len(a.args) - len(a.defaults)
+    args = a.args[:nargs]  # type: list[str]
+
+    return args, options
+
+
+def run(main=None, argv=None, **options):
+    """
+    run python script with commandline options
+
+    :param callable main: the entry point to run
+    :param dict argv:
+    :param options:
+    :return:
+    """
     parser = Parser.from_entry_point(main, **options)
 
     args, kwargs = parser.parse(argv)
