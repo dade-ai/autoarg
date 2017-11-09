@@ -15,9 +15,9 @@ with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
 
 
 setup(name='autoarg',
-      version='0.0.3',
+      version='0.0.4.1',
       description='simple argument parser like as python-fire',
-      long_description='',
+      long_description=long_description,
 
       # The project's main homepage.
       url='https://github.com/dade-ai/autoarg',
