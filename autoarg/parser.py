@@ -40,7 +40,7 @@ class Parser(object):
         self._parser.add_argument('--' + arg, type=atype, default=default, help=h, **kwargs)
 
     def add_option_map(self, optionmap):
-        for opt in optionmap.iteritems():
+        for opt in optionmap.items():
             self.add_option(*opt)
 
     def add_positional_args(self, args):
