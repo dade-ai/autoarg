@@ -28,7 +28,9 @@ def test_parser2():
 
 
 def main(pos1, pos2, kw1=1, kw2=2):
-    pass
+    print('args: ', arg.parsed.args)
+    print('kwargs: ', arg.parsed.kwargs)
+
 
 if __name__ == '__main__':
     arg.run(main)

@@ -68,7 +68,7 @@ class Parser(object):
         parsed = parsed.__dict__
 
         # convert parsed value like as function arguments (args)
-        args = [parsed[k] for k in self.positional]
+        args = tuple(parsed[k] for k in self.positional)
         args += unparsed
 
         # convert parsed value like as function arguments (kwargs)
@@ -158,6 +158,20 @@ def get_options_from_entry(entry):
     return args, options
 
 
+class _Parsed:
+
+    def __init__(self):
+        self.args = tuple()
+        self.kwargs = tuple()
+        self.parser = None
+
+    def set(self, args, kwargs, parser):
+        self.args, self.kwargs, self.parser = args, kwargs, parser
+
+
+parsed = _Parsed()
+
+
 def run(main=None, argv=None, **options):
     """
     run python script with commandline options
@@ -167,9 +181,11 @@ def run(main=None, argv=None, **options):
     :param options:
     :return:
     """
+
     parser = Parser.from_entry_point(main, **options)
 
     args, kwargs = parser.parse(argv)
+    parsed.set(args, kwargs, parser)
 
     sys.exit(main(*args, **kwargs))
 

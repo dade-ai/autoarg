@@ -11,6 +11,7 @@ docstring as a description. just use it!
 ```python
 
 # sample.py
+import autoarg
 
 def main(pos1, pos2, kw1=1, kw2=2):
     """
@@ -21,11 +22,13 @@ def main(pos1, pos2, kw1=1, kw2=2):
     :param kw2:
     :return:
     """
+    # assert autoarg.parsed.args == (pos1, pos2)   
+    # assert autoarg.parsed.kwargs['kw1'] == kw1
+    # assert autoarg.parsed.kwargs['kw2'] == kw2
     pass
 
 
 if __name__ == '__main__':
-    import autoarg
     autoarg.run(main)
 
 ```
