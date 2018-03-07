@@ -68,7 +68,7 @@ class Parser(object):
         parsed = parsed.__dict__
 
         # convert parsed value like as function arguments (args)
-        args = tuple(parsed[k] for k in self.positional)
+        args = [parsed[k] for k in self.positional]
         args += unparsed
 
         # convert parsed value like as function arguments (kwargs)
@@ -76,7 +76,7 @@ class Parser(object):
         kw = {k for k in parsed if k not in self.positional}
         kwargs.update({k: parsed[k] for k in kw})
 
-        return args, kwargs
+        return tuple(args), kwargs
 
     @staticmethod
     def _get_type_and_default(value):
