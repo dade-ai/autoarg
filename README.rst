@@ -26,6 +26,9 @@ write sample.py
         :param kw2:
         :return:
         """
+        # assert autoarg.parsed.args == (pos1, pos2)
+        # assert autoarg.parsed.kwargs['kw1'] == kw1
+        # assert autoarg.parsed.kwargs['kw2'] == kw2
         pass
 
 
