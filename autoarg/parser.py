@@ -143,7 +143,10 @@ def get_docstring(entry):
 
 
 def get_options_from_entry(entry):
-    a = inspect.getargspec(entry)  # namedtuple(args, varargs, keywords, defaults)
+    try:
+        a = inspect.getfullargspec(entry)
+    except AttributeError:
+        a = inspect.getargspec(entry)  # namedtuple(args, varargs, keywords, defaults)
     if a.defaults is None:
         options = dict()
         nargs = len(a.args)
