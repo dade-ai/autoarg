@@ -15,7 +15,7 @@ with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
 
 
 setup(name='autoarg',
-      version='0.0.4.2',
+      version='0.0.5.0',
       description='simple argument parser like as python-fire',
       long_description=long_description,
 
