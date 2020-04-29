@@ -2,6 +2,7 @@
 import argparse
 import sys
 import inspect
+import functools
 
 
 def _str2bool(v):
@@ -129,8 +130,7 @@ class Parser(object):
 
 
 def _get_entry_point(main=None):
-    import sys as _sys
-    main = main or _sys.modules['__main__'].main
+    main = main or sys.modules['__main__'].main
     return main
 
 
@@ -172,20 +172,44 @@ class _Parsed:
 parsed = _Parsed()
 
 
-def run(main=None, argv=None, **options):
+def run(main=None, argv=None, **defaults):
     """
     run python script with commandline options
 
     :param callable main: the entry point to run
     :param dict argv:
-    :param options:
+    :param defaults:
     :return:
     """
 
-    parser = Parser.from_entry_point(main, **options)
+    parser = Parser.from_entry_point(main, **defaults)
 
     args, kwargs = parser.parse(argv)
     parsed.set(args, kwargs, parser)
 
     sys.exit(main(*args, **kwargs))
 
+
+def entry_point(f, **defaults):
+    """decorate function
+    if calling context is entry_point or __main__ then parse commandline and run
+    otherwise call just as a nomal function
+    example:
+        @entry_point
+        def main(pos1, por2, kw=1):
+            print('do something')
+        
+        if __name__ == '__main__':
+            main()
+    """
+    @functools.wraps(f)
+    def wrapped(*args, **kwargs):
+        if f.__module__ == '__main__':
+            return run(main=f, **defaults)
+        else:
+            # normal function call
+            params = defaults.copy()
+            params.update(kwargs)
+            return f(*args, **params)
+
+    return wrapped
